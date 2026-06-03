@@ -1,0 +1,22 @@
+# DreamHost shared hosting — basic hardening
+Options -Indexes
+
+# Block sensitive files from direct HTTP access
+<FilesMatch "^(\.env|\.env\.example)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order deny,allow
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    # Block direct access to includes (one-time create_admin.php is allowed)
+    RewriteCond %{REQUEST_URI} !create_admin\.php$ [NC]
+    RewriteRule ^includes/ - [F,L]
+    # Block SQL dumps and env from URL paths
+    RewriteRule ^database/ - [F,L]
+</IfModule>

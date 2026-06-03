@@ -1,0 +1,44 @@
+<?php
+require_once __DIR__ . '/site.php';
+
+$page_title = $page_title ?? SITE_NAME;
+$body_class = $body_class ?? '';
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="<?= htmlspecialchars(SITE_TAGLINE, ENT_QUOTES, 'UTF-8') ?>">
+    <title><?= htmlspecialchars($page_title, ENT_QUOTES, 'UTF-8') ?> — <?= htmlspecialchars(SITE_NAME, ENT_QUOTES, 'UTF-8') ?></title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="<?= htmlspecialchars(asset_url('css/style.css'), ENT_QUOTES, 'UTF-8') ?>">
+</head>
+<body class="<?= htmlspecialchars($body_class, ENT_QUOTES, 'UTF-8') ?>">
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+
+    <header class="site-header">
+        <div class="container site-header__inner">
+            <a class="site-logo" href="<?= htmlspecialchars(site_url(), ENT_QUOTES, 'UTF-8') ?>">
+                <span class="site-logo__title"><?= htmlspecialchars(SITE_NAME, ENT_QUOTES, 'UTF-8') ?></span>
+                <span class="site-logo__tagline"><?= htmlspecialchars(SITE_TAGLINE, ENT_QUOTES, 'UTF-8') ?></span>
+            </a>
+
+            <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" data-nav-toggle>
+                <span class="nav-toggle__label">Menu</span>
+            </button>
+
+            <nav id="site-nav" class="site-nav" aria-label="Main navigation">
+                <ul class="site-nav__list">
+                    <li><a href="<?= htmlspecialchars(site_url(), ENT_QUOTES, 'UTF-8') ?>"<?= is_current_page('index.php') ? ' aria-current="page"' : '' ?>>Home</a></li>
+                    <li><a href="<?= htmlspecialchars(site_url('roster.php'), ENT_QUOTES, 'UTF-8') ?>"<?= is_current_page('roster.php') ? ' aria-current="page"' : '' ?>>Schedule</a></li>
+                    <li><a href="<?= htmlspecialchars(site_url('nonprofit.php'), ENT_QUOTES, 'UTF-8') ?>"<?= is_current_page('nonprofit.php') ? ' aria-current="page"' : '' ?>>Nonprofit Spotlight</a></li>
+                    <li><a href="<?= htmlspecialchars(site_url('suggestions.php'), ENT_QUOTES, 'UTF-8') ?>"<?= is_current_page('suggestions.php') ? ' aria-current="page"' : '' ?>>Suggestions</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main id="main-content" class="site-main">
