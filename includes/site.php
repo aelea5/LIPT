@@ -7,7 +7,7 @@
 require_once __DIR__ . '/env.php';
 
 define('SITE_NAME', 'Lunch in the Park');
-define('SITE_TAGLINE', '$8 community lunches in the park — Thursdays, June through August.');
+define('SITE_TAGLINE', 'Good lunch. Good cause. Only $8. See you Thursday.');
 
 /**
  * Web path prefix for this install (e.g. "/" or "/lunch-in-the-park/").
@@ -47,6 +47,10 @@ if (!defined('SITE_BASE')) {
     define('SITE_BASE', site_base_path());
 }
 
+/** Admin contact — nonprofit dashboard Contact Admin links. */
+define('ADMIN_EMAIL', 'Info@lunchinthepark.org');
+define('ADMIN_SMS_PHONE', '+12083165068');
+
 function site_url(string $path = ''): string
 {
     $base = rtrim(SITE_BASE, '/');
@@ -60,6 +64,18 @@ function site_url(string $path = ''): string
 function asset_url(string $path): string
 {
     return site_url('assets/' . ltrim($path, '/'));
+}
+
+/** Image filenames under assets/images/ (as stored on disk). */
+define('LITP_IMAGE_LOGO', 'LITP Logo.png');
+define('LITP_IMAGE_GAZEBO', 'gazebo.png');
+define('LITP_IMAGE_CELEBRATION', 'people celebrating litp.png');
+define('LITP_IMAGE_HOUSE', 'house.png');
+define('LITP_IMAGE_JESUP_MODEL', 'jesup model.png');
+
+function image_url(string $filename): string
+{
+    return asset_url('images/' . rawurlencode($filename));
 }
 
 function is_current_page(string $script): bool

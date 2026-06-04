@@ -8,7 +8,7 @@ require_once __DIR__ . '/includes/header.php';
     <div class="container">
         <h1>Nonprofit Spotlight</h1>
         <p class="page-intro">
-            We rotate a featured local nonprofit each month — groups that feed, shelter,
+            We rotate a featured local nonprofit each month, groups that feed, shelter,
             teach, and care for our community.
         </p>
     </div>

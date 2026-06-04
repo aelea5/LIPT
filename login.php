@@ -17,7 +17,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $role = auth_attempt_login($username, $password);
 
     if ($role !== null) {
-        header('Location: ' . auth_dashboard_url_for_role($role));
+        $destination = auth_dashboard_url_for_role($role);
+        if ($role === 'nonprofit') {
+            $logged_in = auth_user();
+            if ($logged_in && auth_needs_verify_prompt((int) $logged_in['id'])) {
+                $_SESSION['litp_show_verify_prompt'] = true;
+            }
+        }
+        header('Location: ' . $destination);
         exit;
     }
 

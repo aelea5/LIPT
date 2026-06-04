@@ -108,6 +108,39 @@ function auth_attempt_login(string $username, string $password): ?string
     return $role;
 }
 
+/**
+ * Whether a nonprofit should see the contact-info verification popup on login.
+ */
+function auth_needs_verify_prompt(int $user_id): bool
+{
+    require_once __DIR__ . '/db.php';
+
+    $stmt = db()->prepare('SELECT last_verified_prompt FROM users WHERE id = ? AND role = ? LIMIT 1');
+    $stmt->execute([$user_id, 'nonprofit']);
+    $row = $stmt->fetch();
+
+    if (!$row) {
+        return false;
+    }
+
+    $last = $row['last_verified_prompt'] ?? null;
+    if ($last === null || $last === '') {
+        return true;
+    }
+
+    $days = (int) ((time() - strtotime((string) $last)) / 86400);
+
+    return $days > 60;
+}
+
+function auth_mark_verify_prompt_today(int $user_id): void
+{
+    require_once __DIR__ . '/db.php';
+
+    $stmt = db()->prepare('UPDATE users SET last_verified_prompt = CURDATE() WHERE id = ?');
+    $stmt->execute([$user_id]);
+}
+
 function auth_logout(): void
 {
     $_SESSION = [];
