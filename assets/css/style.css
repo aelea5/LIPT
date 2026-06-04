@@ -1630,6 +1630,20 @@ th {
     color: var(--color-brick);
 }
 
+.badge--status-open {
+    background: var(--color-cream);
+    color: var(--color-forest);
+    border: 1px solid rgba(45, 80, 22, 0.2);
+}
+
+.roster-location {
+    font-size: 1.0625rem;
+    font-weight: 600;
+    color: var(--color-forest);
+    margin: var(--space-md) 0 0;
+    max-width: 42rem;
+}
+
 .roster-layout {
     display: flex;
     flex-direction: column;
@@ -1673,6 +1687,44 @@ th {
 
 .roster-past .roster-table {
     margin-top: var(--space-md);
+}
+
+.roster-row--open td {
+    background-color: var(--color-cream);
+    border-color: rgba(45, 80, 22, 0.12);
+}
+
+.roster-open-available {
+    margin: 0 0 var(--space-xs);
+    font-size: 1.125rem;
+    line-height: 1.35;
+}
+
+.roster-open-available,
+.roster-open-available strong {
+    font-weight: 700;
+    color: var(--color-brick);
+}
+
+.roster-open-invite {
+    margin: 0;
+    font-size: 0.9375rem;
+    color: var(--color-text);
+}
+
+.roster-row--cancelled td {
+    background-color: rgba(245, 240, 232, 0.65);
+    border-color: rgba(45, 80, 22, 0.08);
+}
+
+.roster-cancelled-note {
+    font-style: italic;
+    color: var(--color-text-muted);
+    margin: 0;
+}
+
+.roster-cancelled-note a {
+    font-style: normal;
 }
 
 .form-group--checkbox label {

@@ -13,6 +13,7 @@
     initVerifyModal();
     initThursdayDateInputs();
     initConfirmDelete();
+    initScheduleHostOptional();
 
     function initMobileNav() {
         var toggle = document.querySelector('[data-nav-toggle]');
@@ -278,6 +279,29 @@
                 }
             });
         });
+    }
+
+    function initScheduleHostOptional() {
+        var status = document.getElementById('status');
+        var host = document.querySelector('[data-schedule-nonprofit]');
+        var requiredMark = document.querySelector('[data-schedule-host-required]');
+
+        if (!status || !host) {
+            return;
+        }
+
+        function syncHostRequired() {
+            var value = status.value;
+            var optional = value === 'open' || value === 'cancelled';
+
+            host.required = !optional;
+            if (requiredMark) {
+                requiredMark.hidden = optional;
+            }
+        }
+
+        status.addEventListener('change', syncHostRequired);
+        syncHostRequired();
     }
 
     function initFormEnhancements() {

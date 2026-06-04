@@ -24,9 +24,9 @@ function admin_schedule_list(): array
 {
     $stmt = db()->query(
         'SELECT s.id, s.nonprofit_id, s.event_date, s.menu_description,
-                s.expected_guests, s.status, n.org_name
+                s.expected_guests, s.status, s.notes, s.cancellation_url, n.org_name
          FROM schedule s
-         INNER JOIN nonprofits n ON n.id = s.nonprofit_id
+         LEFT JOIN nonprofits n ON n.id = s.nonprofit_id
          ORDER BY s.event_date ASC'
     );
 
@@ -50,6 +50,8 @@ function admin_schedule_validate_input(): array
     $menu = trim((string) ($_POST['menu_description'] ?? ''));
     $guests_raw = trim((string) ($_POST['expected_guests'] ?? ''));
     $status = (string) ($_POST['status'] ?? 'draft');
+    $notes = trim((string) ($_POST['notes'] ?? ''));
+    $cancellation_url = trim((string) ($_POST['cancellation_url'] ?? ''));
 
     if ($event_date === '') {
         return ['error' => 'Event date is required.', 'data' => null];
@@ -59,18 +61,28 @@ function admin_schedule_validate_input(): array
         return ['error' => 'Lunch in the Park is on Thursdays only. Please pick a Thursday.', 'data' => null];
     }
 
-    if ($nonprofit_id < 1) {
-        return ['error' => 'Please select a nonprofit host.', 'data' => null];
-    }
-
-    $np = db()->prepare('SELECT id FROM nonprofits WHERE id = ?');
-    $np->execute([$nonprofit_id]);
-    if (!$np->fetch()) {
-        return ['error' => 'Invalid nonprofit selected.', 'data' => null];
-    }
-
-    if (!in_array($status, ['draft', 'confirmed', 'completed', 'cancelled'], true)) {
+    if (!in_array($status, ['draft', 'open', 'confirmed', 'completed', 'cancelled'], true)) {
         $status = 'draft';
+    }
+
+    if ($status === 'open') {
+        $nonprofit_id = null;
+    } elseif ($nonprofit_id < 1) {
+        if ($status === 'cancelled') {
+            $nonprofit_id = null;
+        } else {
+            return ['error' => 'Please select a nonprofit host.', 'data' => null];
+        }
+    } else {
+        $np = db()->prepare('SELECT id FROM nonprofits WHERE id = ?');
+        $np->execute([$nonprofit_id]);
+        if (!$np->fetch()) {
+            return ['error' => 'Invalid nonprofit selected.', 'data' => null];
+        }
+    }
+
+    if ($cancellation_url !== '' && !filter_var($cancellation_url, FILTER_VALIDATE_URL)) {
+        return ['error' => 'Cancellation URL must be a valid web address.', 'data' => null];
     }
 
     $expected_guests = null;
@@ -89,6 +101,8 @@ function admin_schedule_validate_input(): array
             'menu_description' => $menu !== '' ? $menu : null,
             'expected_guests' => $expected_guests,
             'status' => $status,
+            'notes' => $notes !== '' ? $notes : null,
+            'cancellation_url' => $cancellation_url !== '' ? $cancellation_url : null,
         ],
     ];
 }
@@ -144,7 +158,9 @@ function admin_schedule_handle_post(): ?string
                 event_date = ?,
                 menu_description = ?,
                 expected_guests = ?,
-                status = ?
+                status = ?,
+                notes = ?,
+                cancellation_url = ?
              WHERE id = ?'
         );
         $stmt->execute([
@@ -153,6 +169,8 @@ function admin_schedule_handle_post(): ?string
             $data['menu_description'],
             $data['expected_guests'],
             $data['status'],
+            $data['notes'],
+            $data['cancellation_url'],
             $schedule_id,
         ]);
 
@@ -160,8 +178,8 @@ function admin_schedule_handle_post(): ?string
     }
 
     $stmt = db()->prepare(
-        'INSERT INTO schedule (nonprofit_id, event_date, menu_description, expected_guests, status)
-         VALUES (?, ?, ?, ?, ?)'
+        'INSERT INTO schedule (nonprofit_id, event_date, menu_description, expected_guests, status, notes, cancellation_url)
+         VALUES (?, ?, ?, ?, ?, ?, ?)'
     );
     $stmt->execute([
         $data['nonprofit_id'],
@@ -169,6 +187,8 @@ function admin_schedule_handle_post(): ?string
         $data['menu_description'],
         $data['expected_guests'],
         $data['status'],
+        $data['notes'],
+        $data['cancellation_url'],
     ]);
 
     return 'Schedule entry added.';
@@ -182,7 +202,7 @@ function admin_schedule_entry_for_edit(int $id): ?array
     $stmt = db()->prepare(
         'SELECT s.*, n.org_name
          FROM schedule s
-         INNER JOIN nonprofits n ON n.id = s.nonprofit_id
+         LEFT JOIN nonprofits n ON n.id = s.nonprofit_id
          WHERE s.id = ?
          LIMIT 1'
     );
@@ -202,18 +222,25 @@ function admin_schedule_render_manager(?string $flash_message = null): void
     $form = [
         'schedule_id' => $editing ? (int) $editing['id'] : 0,
         'event_date' => $editing ? (string) $editing['event_date'] : ($_POST['event_date'] ?? ''),
-        'nonprofit_id' => $editing ? (int) $editing['nonprofit_id'] : (int) ($_POST['nonprofit_id'] ?? 0),
+        'nonprofit_id' => $editing
+            ? (int) ($editing['nonprofit_id'] ?? 0)
+            : (int) ($_POST['nonprofit_id'] ?? 0),
         'menu_description' => $editing ? (string) ($editing['menu_description'] ?? '') : ($_POST['menu_description'] ?? ''),
         'expected_guests' => $editing
             ? ($editing['expected_guests'] !== null ? (string) $editing['expected_guests'] : '')
             : ($_POST['expected_guests'] ?? ''),
         'status' => $editing ? (string) $editing['status'] : ($_POST['status'] ?? 'draft'),
+        'notes' => $editing ? (string) ($editing['notes'] ?? '') : ($_POST['notes'] ?? ''),
+        'cancellation_url' => $editing
+            ? (string) ($editing['cancellation_url'] ?? '')
+            : ($_POST['cancellation_url'] ?? ''),
     ];
     ?>
     <article class="card dashboard-card dashboard-card--wide" id="schedule-manager">
         <h2>Schedule manager</h2>
         <p class="text-muted">
-            Add and edit Thursday lunches. Only <strong>confirmed</strong> or <strong>completed</strong> dates appear on the
+            Add and edit Thursday lunches. <strong>Open</strong>, <strong>confirmed</strong>, <strong>completed</strong>,
+            and <strong>cancelled</strong> dates appear on the
             <a href="<?= htmlspecialchars(site_url('roster.php'), ENT_QUOTES, 'UTF-8') ?>">public schedule</a>.
         </p>
 
@@ -248,9 +275,11 @@ function admin_schedule_render_manager(?string $flash_message = null): void
                     </div>
 
                     <div class="form-group">
-                        <label for="nonprofit_id">Nonprofit host <span class="text-accent">*</span></label>
-                        <select id="nonprofit_id" name="nonprofit_id" required>
-                            <option value="">Select organization&hellip;</option>
+                        <label for="nonprofit_id">
+                            Nonprofit host <span class="text-accent" data-schedule-host-required>*</span>
+                        </label>
+                        <select id="nonprofit_id" name="nonprofit_id" data-schedule-nonprofit required>
+                            <option value="">No host (open or cancelled date)</option>
                             <?php foreach ($nonprofits as $np): ?>
                                 <option value="<?= (int) $np['id'] ?>"
                                     <?= $form['nonprofit_id'] === (int) $np['id'] ? 'selected' : '' ?>>
@@ -258,6 +287,7 @@ function admin_schedule_render_manager(?string $flash_message = null): void
                                 </option>
                             <?php endforeach; ?>
                         </select>
+                        <p class="form-hint">Leave blank for open or cancelled dates.</p>
                     </div>
 
                     <div class="form-group">
@@ -274,12 +304,28 @@ function admin_schedule_render_manager(?string $flash_message = null): void
                     <div class="form-group">
                         <label for="status">Status</label>
                         <select id="status" name="status">
-                            <?php foreach (['draft', 'confirmed', 'completed', 'cancelled'] as $st): ?>
+                            <?php foreach (['draft', 'open', 'confirmed', 'completed', 'cancelled'] as $st): ?>
                                 <option value="<?= $st ?>" <?= $form['status'] === $st ? 'selected' : '' ?>>
                                     <?= ucfirst($st) ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="notes">Notes (public when cancelled)</label>
+                        <input type="text" id="notes" name="notes" maxlength="255"
+                            placeholder="RAGBRAI, VBS, or a short friendly note"
+                            value="<?= htmlspecialchars($form['notes'], ENT_QUOTES, 'UTF-8') ?>">
+                        <p class="form-hint">Use <strong>RAGBRAI</strong> or <strong>VBS</strong> for standard cancellation messages.</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="cancellation_url">Cancellation link (optional)</label>
+                        <input type="url" id="cancellation_url" name="cancellation_url"
+                            placeholder="https://..."
+                            value="<?= htmlspecialchars($form['cancellation_url'], ENT_QUOTES, 'UTF-8') ?>">
+                        <p class="form-hint">Linked from the word RAGBRAI when notes are set to RAGBRAI.</p>
                     </div>
 
                     <button type="submit" class="btn btn--primary">
@@ -312,7 +358,13 @@ function admin_schedule_render_manager(?string $flash_message = null): void
                                 ?>
                                 <tr>
                                     <td><?= htmlspecialchars(date('M j, Y', strtotime((string) $row['event_date'])), ENT_QUOTES, 'UTF-8') ?></td>
-                                    <td><?= htmlspecialchars((string) $row['org_name'], ENT_QUOTES, 'UTF-8') ?></td>
+                                    <td>
+                                        <?php if (!empty($row['org_name'])): ?>
+                                            <?= htmlspecialchars((string) $row['org_name'], ENT_QUOTES, 'UTF-8') ?>
+                                        <?php else: ?>
+                                            <span class="text-muted">N/A</span>
+                                        <?php endif; ?>
+                                    </td>
                                     <td>
                                         <?php if ($menu !== ''): ?>
                                             <?= htmlspecialchars($menu, ENT_QUOTES, 'UTF-8') ?>

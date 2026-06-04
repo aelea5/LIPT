@@ -44,11 +44,13 @@ CREATE TABLE IF NOT EXISTS nonprofits (
 
 CREATE TABLE IF NOT EXISTS schedule (
     id INT UNSIGNED NOT NULL AUTO_INCREMENT,
-    nonprofit_id INT UNSIGNED NOT NULL,
+    nonprofit_id INT UNSIGNED NULL,
     event_date DATE NOT NULL,
     menu_description TEXT NULL,
     expected_guests INT UNSIGNED NULL,
-    status ENUM('draft', 'confirmed', 'completed', 'cancelled') NOT NULL DEFAULT 'draft',
+    status ENUM('draft', 'open', 'confirmed', 'completed', 'cancelled') NOT NULL DEFAULT 'draft',
+    notes VARCHAR(255) NULL,
+    cancellation_url VARCHAR(512) NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id),
     KEY idx_schedule_nonprofit_id (nonprofit_id),

@@ -9,10 +9,15 @@ require_once __DIR__ . '/includes/header.php';
 
 <section class="page-hero">
     <div class="container">
-        <h1>Schedule</h1>
+        <h1>This Summer&rsquo;s Schedule</h1>
         <p class="page-intro">
-            Lunch in the Park runs on <strong>Thursdays only</strong>, from June through August, not every Thursday,
-            only the dates listed below. Each lunch is <strong>$8</strong>. A different host team serves each scheduled day.
+            We run on selected Thursdays from June through August, not every week. Check the dates below,
+            show up hungry, and bring $8. A different Jesup nonprofit hosts each week and keeps every dollar
+            raised. Lemonade, water, coffee, and dessert come with every plate.
+        </p>
+        <p class="roster-location">
+            Every serving Thursday, 11am to 1pm at the Land O&rsquo; Corn Park Pavilion, across from the
+            post office on Young and Main.
         </p>
     </div>
 </section>

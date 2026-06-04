@@ -21,7 +21,7 @@ require_once __DIR__ . '/includes/header.php';
     <div class="container page-hero__inner">
         <h1 id="home-hero-heading">Welcome to Lunch in the Park</h1>
         <p class="page-intro">
-            Sticking to our 30 year tradition, every Thursday this summer a different Jesup nonprofit sets up
+            Sticking to our 30 year tradition, select Thursdays this summer, a different Jesup nonprofit sets up
             at the Land O&rsquo; Corn Park Pavilion and serves a lunch for $8 a plate. You show up, eat well,
             and every dollar goes straight to a local cause. No reservation. No dress code. Just good food
             and good people.
@@ -38,7 +38,7 @@ require_once __DIR__ . '/includes/header.php';
         <div class="card-grid card-grid--home">
             <a class="card card--link" href="<?= htmlspecialchars(site_url('roster.php'), ENT_QUOTES, 'UTF-8') ?>">
                 <h2>Schedule</h2>
-                <p class="text-muted">Who&rsquo;s serving, what&rsquo;s on the menu, and which Thursdays we&rsquo;re open this summer.</p>
+                <p class="text-muted">Who&rsquo;s serving, what&rsquo;s on the menu, and which select Thursdays we&rsquo;re serving this summer.</p>
                 <span class="card__cta">See the schedule</span>
             </a>
             <a class="card card--link" href="<?= htmlspecialchars(site_url('suggestions.php'), ENT_QUOTES, 'UTF-8') ?>">
@@ -60,8 +60,8 @@ require_once __DIR__ . '/includes/header.php';
         <h2 id="mission-heading">Our Mission</h2>
         <p>
             Thirty years ago someone had a simple idea: get neighbors together over a meal and help local
-            nonprofits while you&rsquo;re at it. That idea is still going. Every week a different organization
-            takes the pavilion of the summer, feeds the crowd, and walks away with every dollar raised.
+            nonprofits while you&rsquo;re at it. That idea is still going. On each serving Thursday, a different organization
+            takes the pavilion for the summer, feeds the crowd, and walks away with every dollar raised.
             We just show up and eat.
         </p>
         <p>
