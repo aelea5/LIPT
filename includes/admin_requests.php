@@ -204,7 +204,7 @@ function admin_requests_handle_post(array $admin_user): ?string
         }
         error_log('approve request: ' . $e->getMessage());
 
-        return 'Could not create the account. No changes were saved. Please try again.';
+        return 'Error: ' . $e->getMessage();
     }
 
     return sprintf(

@@ -1937,3 +1937,134 @@ body.has-verify-modal {
         background: #fff;
     }
 }
+
+/* This Thursday slide-up card (homepage)
+   -------------------------------------------------------------------------- */
+
+.thursday-card {
+    position: fixed;
+    z-index: 1000;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: 0;
+    padding: var(--space-md) var(--space-lg) var(--space-lg);
+    background: var(--color-forest);
+    color: var(--color-cream);
+    box-shadow: 0 -4px 24px rgba(45, 80, 22, 0.25);
+    transform: translateY(100%);
+    transition: transform 0.45s ease;
+    visibility: hidden;
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+}
+
+.thursday-card.is-ready {
+    visibility: visible;
+}
+
+.thursday-card.is-visible {
+    transform: translateY(0);
+}
+
+.thursday-card__close {
+    position: absolute;
+    top: var(--space-xs);
+    right: var(--space-xs);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+    padding: 0;
+    border: none;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--color-cream);
+    font-size: 1.75rem;
+    line-height: 1;
+    cursor: pointer;
+    opacity: 0.85;
+    transition: opacity 0.15s ease, background-color 0.15s ease;
+}
+
+.thursday-card__close:hover,
+.thursday-card__close:focus-visible {
+    opacity: 1;
+    background: rgba(245, 240, 232, 0.12);
+}
+
+.thursday-card__heading {
+    margin: 0 2rem var(--space-sm) 0;
+    font-family: var(--font-heading);
+    font-size: 1.35rem;
+    font-weight: 600;
+    color: var(--color-cream);
+}
+
+.thursday-card__body {
+    font-size: 0.9875rem;
+    line-height: 1.5;
+}
+
+.thursday-card__body p {
+    margin: 0 0 var(--space-sm);
+}
+
+.thursday-card__org {
+    font-size: 1.0625rem;
+}
+
+.thursday-card__menu {
+    font-style: italic;
+}
+
+.thursday-card__details {
+    opacity: 0.92;
+}
+
+.thursday-card__message {
+    margin-bottom: var(--space-sm);
+}
+
+.thursday-card__message .roster-cancelled-note {
+    color: var(--color-cream);
+    font-style: normal;
+}
+
+.thursday-card__message .roster-cancelled-note a {
+    color: var(--color-cream);
+    text-decoration: underline;
+}
+
+.thursday-card__link {
+    margin: var(--space-sm) 0 0;
+}
+
+.thursday-card__link a {
+    color: var(--color-cream);
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+}
+
+.thursday-card__link a:hover,
+.thursday-card__link a:focus-visible {
+    color: var(--color-sky);
+}
+
+@media (min-width: 768px) {
+    .thursday-card {
+        left: auto;
+        right: var(--space-md);
+        bottom: var(--space-md);
+        width: 320px;
+        max-width: calc(100% - 2 * var(--space-md));
+        border-radius: var(--radius-md);
+        box-shadow: 0 8px 32px rgba(45, 80, 22, 0.28);
+        transform: translateY(calc(100% + var(--space-md)));
+    }
+
+    .thursday-card.is-visible {
+        transform: translateY(0);
+    }
+}

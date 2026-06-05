@@ -1,8 +1,43 @@
 <?php
 require_once __DIR__ . '/includes/site.php';
 require_once __DIR__ . '/includes/participation.php';
+require_once __DIR__ . '/includes/db.php';
+require_once __DIR__ . '/includes/roster_display.php';
 
 $participation = participation_handle_post();
+
+$thursday_card_show = false;
+$thursday_card = null;
+
+try {
+    $stmt = db()->query(
+        "SELECT s.id, s.event_date, s.menu_description, s.status, s.notes, s.cancellation_url,
+                n.org_name
+         FROM schedule s
+         LEFT JOIN nonprofits n ON n.id = s.nonprofit_id
+         WHERE s.event_date >= CURDATE()
+           AND s.event_date <= DATE_ADD(CURDATE(), INTERVAL 7 DAY)
+           AND s.status IN ('open', 'confirmed', 'cancelled')
+         ORDER BY s.event_date ASC
+         LIMIT 1"
+    );
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    if ($row) {
+        $thursday_card_show = true;
+        $thursday_card = $row;
+    }
+} catch (PDOException $e) {
+    error_log('index.php thursday card: ' . $e->getMessage());
+}
+
+$thursday_card_heading = null;
+if ($thursday_card_show && $thursday_card !== null) {
+    $event_ts = strtotime((string) $thursday_card['event_date']);
+    $same_week = date('o-W', $event_ts) === date('o-W');
+    $thursday_card_heading = $same_week
+        ? 'This Thursday'
+        : 'Coming Up Thursday, ' . date('F j', $event_ts);
+}
 
 $page_title = 'Home';
 $body_class = 'page-home';
@@ -90,5 +125,49 @@ require_once __DIR__ . '/includes/header.php';
         <?php participation_render_form($participation['error'], $participation['success']); ?>
     </div>
 </section>
+
+<?php if ($thursday_card_show && $thursday_card !== null && $thursday_card_heading !== null): ?>
+    <?php
+    $card_status = (string) ($thursday_card['status'] ?? '');
+    $roster_url = site_url('roster.php');
+    $participate_url = site_url('index.php#want-to-participate');
+    ?>
+    <aside class="thursday-card" id="thursday-card" data-thursday-card hidden aria-labelledby="thursday-card-heading">
+        <button type="button" class="thursday-card__close" data-thursday-card-close aria-label="Close this Thursday notice">&times;</button>
+        <h2 class="thursday-card__heading" id="thursday-card-heading"><?= htmlspecialchars($thursday_card_heading, ENT_QUOTES, 'UTF-8') ?></h2>
+
+        <div class="thursday-card__body">
+            <?php if ($card_status === 'confirmed'): ?>
+                <p class="thursday-card__org">
+                    <strong><?= htmlspecialchars((string) ($thursday_card['org_name'] ?? ''), ENT_QUOTES, 'UTF-8') ?: 'Host TBA' ?></strong>
+                </p>
+                <?php $menu = trim((string) ($thursday_card['menu_description'] ?? '')); ?>
+                <?php if ($menu !== ''): ?>
+                    <p class="thursday-card__menu"><?= htmlspecialchars($menu, ENT_QUOTES, 'UTF-8') ?></p>
+                <?php endif; ?>
+                <p class="thursday-card__details">11am to 1pm, Land O&rsquo; Corn Park Pavilion, Young and Main</p>
+                <p class="thursday-card__link">
+                    <a href="<?= htmlspecialchars($roster_url, ENT_QUOTES, 'UTF-8') ?>">See the full schedule</a>
+                </p>
+
+            <?php elseif ($card_status === 'cancelled'): ?>
+                <div class="thursday-card__message">
+                    <?php roster_render_cancelled_note($thursday_card); ?>
+                </div>
+                <p class="thursday-card__link">
+                    <a href="<?= htmlspecialchars($roster_url, ENT_QUOTES, 'UTF-8') ?>">See the full schedule</a>
+                </p>
+
+            <?php elseif ($card_status === 'open'): ?>
+                <p class="thursday-card__message">
+                    We are still looking for a host this Thursday. Could your group feed the crowd?
+                </p>
+                <p class="thursday-card__link">
+                    <a href="<?= htmlspecialchars($participate_url, ENT_QUOTES, 'UTF-8') ?>">Learn how to participate</a>
+                </p>
+            <?php endif; ?>
+        </div>
+    </aside>
+<?php endif; ?>
 
 <?php require_once __DIR__ . '/includes/footer.php'; ?>

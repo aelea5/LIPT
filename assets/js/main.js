@@ -14,6 +14,7 @@
     initThursdayDateInputs();
     initConfirmDelete();
     initScheduleHostOptional();
+    initThursdayCard();
 
     function initMobileNav() {
         var toggle = document.querySelector('[data-nav-toggle]');
@@ -302,6 +303,57 @@
 
         status.addEventListener('change', syncHostRequired);
         syncHostRequired();
+    }
+
+    function initThursdayCard() {
+        var card = document.querySelector('[data-thursday-card]');
+        if (!card) {
+            return;
+        }
+
+        var cookieName = 'litp_thursday_card_dismissed';
+
+        function getCookie(name) {
+            var parts = document.cookie.split(';');
+            for (var i = 0; i < parts.length; i++) {
+                var part = parts[i].trim();
+                if (part.indexOf(name + '=') === 0) {
+                    return part.substring(name.length + 1);
+                }
+            }
+            return null;
+        }
+
+        function setCookie(name, value, hours) {
+            var expires = new Date();
+            expires.setTime(expires.getTime() + hours * 60 * 60 * 1000);
+            document.cookie = name + '=' + value
+                + ';expires=' + expires.toUTCString()
+                + ';path=/;SameSite=Lax';
+        }
+
+        if (getCookie(cookieName) === '1') {
+            card.remove();
+            return;
+        }
+
+        card.hidden = false;
+        card.classList.add('is-ready');
+
+        window.setTimeout(function () {
+            card.classList.add('is-visible');
+        }, 500);
+
+        var closeBtn = card.querySelector('[data-thursday-card-close]');
+        if (closeBtn) {
+            closeBtn.addEventListener('click', function () {
+                setCookie(cookieName, '1', 24);
+                card.classList.remove('is-visible');
+                window.setTimeout(function () {
+                    card.remove();
+                }, 450);
+            });
+        }
     }
 
     function initFormEnhancements() {
