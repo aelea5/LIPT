@@ -14,9 +14,18 @@ Options -Indexes
 
 <IfModule mod_rewrite.c>
     RewriteEngine On
+    RewriteBase /
     # Block direct access to includes (one-time create_admin.php is allowed)
     RewriteCond %{REQUEST_URI} !create_admin\.php$ [NC]
     RewriteRule ^includes/ - [F,L]
     # Block SQL dumps and env from URL paths
     RewriteRule ^database/ - [F,L]
+
+    # Clean URLs (301 permanent redirects; leading / avoids DreamHost path doubling)
+    RewriteRule ^login/?$ /login.php [R=301,L,NC]
+    RewriteRule ^schedule/?$ /roster.php [R=301,L,NC]
+    RewriteRule ^suggestions/?$ /suggestions.php [R=301,L,NC]
+    RewriteRule ^spotlight/?$ /nonprofit.php [R=301,L,NC]
+    RewriteRule ^about/?$ /about.php [R=301,L,NC]
+    RewriteRule ^dashboard/?$ /dashboard/index.php [R=301,L,NC]
 </IfModule>

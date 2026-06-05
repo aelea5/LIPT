@@ -7,6 +7,18 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/db.php';
 
+function admin_suggestions_flash_take(): ?string
+{
+    if (empty($_SESSION['litp_suggestions_flash'])) {
+        return null;
+    }
+
+    $message = (string) $_SESSION['litp_suggestions_flash'];
+    unset($_SESSION['litp_suggestions_flash']);
+
+    return $message;
+}
+
 function admin_suggestions_unread_count(): int
 {
     $stmt = db()->query('SELECT COUNT(*) FROM suggestions WHERE is_read = 0');
@@ -20,7 +32,7 @@ function admin_suggestions_unread_count(): int
 function admin_suggestions_list(): array
 {
     $stmt = db()->query(
-        'SELECT id, name, email, message, is_read, created_at
+        'SELECT id, name, email, message, created_at, is_read
          FROM suggestions
          ORDER BY is_read ASC, created_at DESC'
     );
@@ -28,27 +40,9 @@ function admin_suggestions_list(): array
     return $stmt->fetchAll();
 }
 
-function admin_suggestions_handle_post(): ?string
-{
-    if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST' || !isset($_POST['suggestion_mark_read'])) {
-        return null;
-    }
-
-    $id = (int) ($_POST['suggestion_id'] ?? 0);
-    if ($id < 1) {
-        return 'Could not mark that suggestion as read.';
-    }
-
-    $stmt = db()->prepare('UPDATE suggestions SET is_read = 1 WHERE id = ?');
-    $stmt->execute([$id]);
-
-    return $stmt->rowCount() > 0
-        ? 'Marked as read.'
-        : 'Could not mark that suggestion as read.';
-}
-
 function admin_suggestions_render_inbox(?string $flash_message = null): void
 {
+    $action_url = site_url('dashboard/actions/suggestion_action.php');
     $unread = admin_suggestions_unread_count();
     $items = admin_suggestions_list();
     ?>
@@ -88,6 +82,9 @@ function admin_suggestions_render_inbox(?string $flash_message = null): void
                                 <a href="mailto:<?= htmlspecialchars($email, ENT_QUOTES, 'UTF-8') ?>">
                                     <?= htmlspecialchars($email, ENT_QUOTES, 'UTF-8') ?>
                                 </a>
+                            <?php else: ?>
+                                &middot;
+                                <span class="text-muted">No email</span>
                             <?php endif; ?>
                             <span class="text-muted">
                                 &middot;
@@ -98,13 +95,20 @@ function admin_suggestions_render_inbox(?string $flash_message = null): void
                             <?php endif; ?>
                         </div>
                         <p class="suggestion-inbox-list__message"><?= nl2br(htmlspecialchars((string) $item['message'], ENT_QUOTES, 'UTF-8')) ?></p>
-                        <?php if ($is_unread): ?>
-                            <form method="post" action="#suggestions-inbox" class="suggestion-inbox-list__action">
-                                <input type="hidden" name="suggestion_mark_read" value="1">
+                        <div class="suggestion-inbox-list__actions">
+                            <?php if ($is_unread): ?>
+                                <form method="post" action="<?= htmlspecialchars($action_url, ENT_QUOTES, 'UTF-8') ?>">
+                                    <input type="hidden" name="action" value="mark_read">
+                                    <input type="hidden" name="suggestion_id" value="<?= $id ?>">
+                                    <button type="submit" class="btn btn--secondary btn--small">Mark as read</button>
+                                </form>
+                            <?php endif; ?>
+                            <form method="post" action="<?= htmlspecialchars($action_url, ENT_QUOTES, 'UTF-8') ?>" data-confirm-delete="Delete this suggestion?">
+                                <input type="hidden" name="action" value="delete">
                                 <input type="hidden" name="suggestion_id" value="<?= $id ?>">
-                                <button type="submit" class="btn btn--secondary btn--small">Mark as read</button>
+                                <button type="submit" class="btn btn--secondary btn--small">Delete</button>
                             </form>
-                        <?php endif; ?>
+                        </div>
                     </li>
                 <?php endforeach; ?>
             </ul>

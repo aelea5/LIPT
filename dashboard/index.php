@@ -18,7 +18,7 @@ $user = auth_user();
 $role = 'admin';
 $directory_message = contact_directory_handle_post($role, $user ?? null);
 $requests_message = admin_requests_handle_post($user ?? ['id' => 0, 'username' => 'admin']);
-$suggestions_message = admin_suggestions_handle_post();
+$suggestions_message = admin_suggestions_flash_take();
 $schedule_message = admin_schedule_handle_post();
 $directory_flash = ($requests_message !== null || $suggestions_message !== null || $schedule_message !== null)
     ? null

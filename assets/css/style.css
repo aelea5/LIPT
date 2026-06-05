@@ -1563,7 +1563,14 @@ th {
     white-space: pre-wrap;
 }
 
-.suggestion-inbox-list__action {
+.suggestion-inbox-list__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+    margin: 0;
+}
+
+.suggestion-inbox-list__actions form {
     margin: 0;
 }
 
