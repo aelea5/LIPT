@@ -9,12 +9,14 @@ $body_class = $body_class ?? '';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
     <meta name="description" content="<?= htmlspecialchars(SITE_TAGLINE, ENT_QUOTES, 'UTF-8') ?>">
     <title><?= htmlspecialchars($page_title, ENT_QUOTES, 'UTF-8') ?> | <?= htmlspecialchars(SITE_NAME, ENT_QUOTES, 'UTF-8') ?></title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="<?= htmlspecialchars(asset_url('css/style.css'), ENT_QUOTES, 'UTF-8') ?>">
+    <link rel="stylesheet" href="<?= htmlspecialchars(asset_url('css/style.css') . '?v=' . ASSET_VERSION, ENT_QUOTES, 'UTF-8') ?>">
 </head>
 <body class="<?= htmlspecialchars($body_class, ENT_QUOTES, 'UTF-8') ?>">
     <a class="skip-link" href="#main-content">Skip to main content</a>

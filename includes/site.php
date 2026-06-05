@@ -9,6 +9,8 @@ require_once __DIR__ . '/env.php';
 define('SITE_NAME', 'Lunch in the Park');
 define('SITE_TAGLINE', 'Good lunch. Good cause. Only $8. See you Thursday.');
 
+define('ASSET_VERSION', '1.0.' . filemtime(__DIR__ . '/../assets/css/style.css'));
+
 /**
  * Web path prefix for this install (e.g. "/" or "/lunch-in-the-park/").
  */

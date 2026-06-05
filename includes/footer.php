@@ -45,6 +45,6 @@
         </div>
     </footer>
 
-    <script src="<?= htmlspecialchars(asset_url('js/main.js'), ENT_QUOTES, 'UTF-8') ?>" defer></script>
+    <script src="<?= htmlspecialchars(asset_url('js/main.js') . '?v=' . ASSET_VERSION, ENT_QUOTES, 'UTF-8') ?>" defer></script>
 </body>
 </html>

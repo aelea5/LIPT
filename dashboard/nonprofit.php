@@ -96,13 +96,46 @@ $verify_prompt_url = site_url('dashboard/verify_prompt.php');
                 <p class="dashboard-card__hint text-muted">Calculator coming soon.</p>
             </article>
 
-            <article class="card dashboard-card">
+            <article class="card dashboard-card dashboard-card--wide">
                 <h2>What&rsquo;s Provided / What&rsquo;s Expected</h2>
                 <p class="text-muted">Park pavilion setup, supplies, and what your team brings.</p>
-                <ul class="checklist-placeholder">
-                    <li><span class="text-muted">Provided list, coming soon</span></li>
-                    <li><span class="text-muted">Expected list, coming soon</span></li>
-                </ul>
+
+                <div class="host-supplies-grid">
+                    <div class="host-supplies-column">
+                        <h3 class="host-supplies-heading">What we provide</h3>
+                        <ul class="host-supplies-list host-supplies-list--check">
+                            <li>Tables</li>
+                            <li>Large coffee percolator</li>
+                            <li>Up to three large beverage dispensers</li>
+                            <li>Power access at the pavilion</li>
+                            <li>Cups, plates, and to-go carriers</li>
+                            <li>Flatware packages including salt, pepper, and napkins</li>
+                            <li>Lemonade and coffee</li>
+                            <li>Dessert</li>
+                        </ul>
+                    </div>
+
+                    <div class="host-supplies-column">
+                        <h3 class="host-supplies-heading">What your team brings</h3>
+                        <ul class="host-supplies-list host-supplies-list--bullet">
+                            <li>All food for your chosen menu</li>
+                            <li>Any additional serving equipment your menu requires</li>
+                            <li>Your volunteer crew</li>
+                            <li>If selling canned soda: your own ice and cooler</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="host-supplies-expect">
+                    <h3 class="host-supplies-heading">What to expect</h3>
+                    <ul class="host-supplies-list host-supplies-list--bullet">
+                        <li>Plan for 90 to 150 guests</li>
+                        <li>You serve from 11am to 1pm</li>
+                        <li>Every attendee pays $8 flat. That covers food, dessert, and a drink</li>
+                        <li>You keep every dollar raised</li>
+                        <li>The pavilion is covered. Rain does not cancel the event</li>
+                    </ul>
+                </div>
             </article>
 
             <article class="card dashboard-card">
