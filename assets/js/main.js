@@ -16,7 +16,7 @@
     initScheduleHostOptional();
     initThursdayCard();
     initFaqAccordion();
-    initFaqContactLink();
+    initSmartContactLinks();
 
     function initMobileNav() {
         var toggle = document.querySelector('[data-nav-toggle]');
@@ -380,14 +380,11 @@
         });
     }
 
-    function initFaqContactLink() {
-        var link = document.querySelector('[data-faq-contact-link]');
-        if (!link) {
+    function initSmartContactLinks() {
+        var links = document.querySelectorAll('[data-faq-contact-link], [data-contact-admin-link]');
+        if (!links.length) {
             return;
         }
-
-        var mobileHref = link.getAttribute('data-href-mobile') || 'sms:2083165068';
-        var desktopHref = link.getAttribute('data-href-desktop') || 'tel:2083165068';
 
         function isMobileDevice() {
             if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
@@ -398,7 +395,12 @@
                 && window.matchMedia('(max-width: 768px) and (pointer: coarse)').matches;
         }
 
-        link.setAttribute('href', isMobileDevice() ? mobileHref : desktopHref);
+        links.forEach(function (link) {
+            var mobileHref = link.getAttribute('data-href-mobile') || 'sms:2083165068';
+            var desktopHref = link.getAttribute('data-href-desktop') || 'tel:2083165068';
+
+            link.setAttribute('href', isMobileDevice() ? mobileHref : desktopHref);
+        });
     }
 
     function initFormEnhancements() {

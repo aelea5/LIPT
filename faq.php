@@ -5,6 +5,7 @@ $page_title = 'FAQ';
 $body_class = 'page-faq';
 $participate_url = site_url('index.php#want-to-participate');
 $suggestions_url = site_url('suggestions.php');
+$menu_ideas_url = site_url('menu-ideas.php');
 
 require_once __DIR__ . '/includes/header.php';
 ?>
@@ -102,7 +103,7 @@ require_once __DIR__ . '/includes/header.php';
                 <div id="faq-a-6" class="faq-answer" role="region" aria-labelledby="faq-q-6" hidden>
                     <p>
                         Absolutely, with some guidance. This is not a full scale restaurant operation, so we provide a
-                        <a href="<?= htmlspecialchars($suggestions_url, ENT_QUOTES, 'UTF-8') ?>">menu ideas page</a>
+                        <a href="<?= htmlspecialchars($menu_ideas_url, ENT_QUOTES, 'UTF-8') ?>">menu ideas page</a>
                         to help you plan something that works well at the pavilion and keeps your costs down.
                     </p>
                 </div>

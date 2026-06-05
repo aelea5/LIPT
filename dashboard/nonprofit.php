@@ -1,6 +1,7 @@
 <?php
 require_once dirname(__DIR__) . '/includes/site.php';
 require_once dirname(__DIR__) . '/includes/auth.php';
+require_once dirname(__DIR__) . '/includes/db.php';
 require_once dirname(__DIR__) . '/includes/contact_directory.php';
 
 auth_require_login();
@@ -23,6 +24,34 @@ $show_verify_modal = auth_needs_verify_prompt((int) $user['id']);
 $open_profile_edit = isset($_GET['edit']) && $_GET['edit'] === '1';
 $own_nonprofit = edit_contact_nonprofit_for_user((int) $user['id']);
 $own_edit_dialog_id = 'contact-edit-' . (int) ($own_nonprofit['id'] ?? 0);
+
+$upcoming_assignment = null;
+
+try {
+    $np_stmt = db()->prepare(
+        'SELECT id FROM nonprofits WHERE user_id = ? LIMIT 1'
+    );
+    $np_stmt->execute([(int) $user['id']]);
+    $nonprofit_record = $np_stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($nonprofit_record) {
+        $sched_stmt = db()->prepare(
+            'SELECT event_date, menu_description, expected_guests
+             FROM schedule
+             WHERE nonprofit_id = ?
+               AND event_date >= CURDATE()
+             ORDER BY event_date ASC
+             LIMIT 1'
+        );
+        $sched_stmt->execute([(int) $nonprofit_record['id']]);
+        $row = $sched_stmt->fetch(PDO::FETCH_ASSOC);
+        if ($row) {
+            $upcoming_assignment = $row;
+        }
+    }
+} catch (PDOException $e) {
+    error_log('nonprofit dashboard assignment: ' . $e->getMessage());
+}
 
 $page_title = 'Nonprofit Dashboard';
 $body_class = 'page-dashboard page-dashboard-nonprofit';
@@ -72,17 +101,53 @@ $verify_prompt_url = site_url('dashboard/verify_prompt.php');
 
             <article class="card dashboard-card">
                 <h2>Your Assigned Date and Menu</h2>
-                <p class="text-muted">Your Thursday assignment and planned menu will appear here.</p>
-                <dl class="detail-list">
-                    <div class="detail-list__row">
-                        <dt>Date</dt>
-                        <dd class="text-muted">Not assigned</dd>
-                    </div>
-                    <div class="detail-list__row">
-                        <dt>Menu</dt>
-                        <dd class="text-muted">N/A</dd>
-                    </div>
-                </dl>
+                <?php if ($upcoming_assignment !== null): ?>
+                    <?php
+                    $event_ts = strtotime((string) $upcoming_assignment['event_date']);
+                    $formatted_date = date('l, F j, Y', $event_ts);
+                    $menu_text = trim((string) ($upcoming_assignment['menu_description'] ?? ''));
+                    if ($menu_text === '') {
+                        $menu_text = 'Menu not set yet';
+                    }
+                    $expected_guests = $upcoming_assignment['expected_guests'] ?? null;
+                    ?>
+                    <dl class="detail-list">
+                        <div class="detail-list__row">
+                            <dt>Date</dt>
+                            <dd><?= htmlspecialchars($formatted_date, ENT_QUOTES, 'UTF-8') ?></dd>
+                        </div>
+                        <div class="detail-list__row">
+                            <dt>Time</dt>
+                            <dd>11am to 1pm</dd>
+                        </div>
+                        <div class="detail-list__row">
+                            <dt>Location</dt>
+                            <dd>Land O&rsquo; Corn Park Pavilion, Young and Main</dd>
+                        </div>
+                        <div class="detail-list__row">
+                            <dt>Menu</dt>
+                            <dd><?= htmlspecialchars($menu_text, ENT_QUOTES, 'UTF-8') ?></dd>
+                        </div>
+                        <?php if ($expected_guests !== null && $expected_guests !== '' && (int) $expected_guests > 0): ?>
+                            <div class="detail-list__row">
+                                <dt>Expected guests</dt>
+                                <dd><?= htmlspecialchars((string) (int) $expected_guests, ENT_QUOTES, 'UTF-8') ?></dd>
+                            </div>
+                        <?php endif; ?>
+                    </dl>
+                    <p class="dashboard-card__hint text-muted">You keep every dollar raised. Plan for 90 to 150 guests.</p>
+                <?php else: ?>
+                    <p>You do not have a date assigned yet. Check back soon or contact the coordinator.</p>
+                    <p>
+                        <a
+                            class="btn btn--primary"
+                            href="<?= htmlspecialchars($admin_email_href, ENT_QUOTES, 'UTF-8') ?>"
+                            data-contact-admin-link
+                            data-href-mobile="<?= htmlspecialchars($admin_sms_href, ENT_QUOTES, 'UTF-8') ?>"
+                            data-href-desktop="<?= htmlspecialchars($admin_email_href, ENT_QUOTES, 'UTF-8') ?>"
+                        >Contact coordinator</a>
+                    </p>
+                <?php endif; ?>
             </article>
 
             <article class="card dashboard-card">

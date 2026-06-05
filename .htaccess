@@ -44,5 +44,6 @@ Options -Indexes
     RewriteRule ^suggestions/?$ /suggestions.php [R=301,L,NC]
     RewriteRule ^spotlight/?$ /nonprofit.php [R=301,L,NC]
     RewriteRule ^about/?$ /about.php [R=301,L,NC]
+    RewriteRule ^menu-ideas/?$ /menu-ideas.php [R=301,L,NC]
     RewriteRule ^dashboard/?$ /dashboard/index.php [R=301,L,NC]
 </IfModule>
