@@ -6,7 +6,11 @@ $error = '';
 
 if (auth_is_logged_in()) {
     $user = auth_user();
-    header('Location: ' . auth_dashboard_url_for_role($user['role']));
+    if (auth_must_change_password()) {
+        header('Location: ' . site_url('change_password.php'));
+    } else {
+        header('Location: ' . auth_dashboard_url_for_role($user['role']));
+    }
     exit;
 }
 
@@ -17,6 +21,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $role = auth_attempt_login($username, $password);
 
     if ($role !== null) {
+        if ($role === 'nonprofit' && auth_must_change_password()) {
+            header('Location: ' . site_url('change_password.php'));
+            exit;
+        }
+
         $destination = auth_dashboard_url_for_role($role);
         if ($role === 'nonprofit') {
             $logged_in = auth_user();

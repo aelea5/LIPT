@@ -174,7 +174,7 @@ function admin_requests_handle_post(array $admin_user): ?string
 
     try {
         $user_stmt = $pdo->prepare(
-            'INSERT INTO users (username, email, password, role) VALUES (?, ?, ?, ?)'
+            'INSERT INTO users (username, email, password, role, force_password_change) VALUES (?, ?, ?, ?, 1)'
         );
         $user_stmt->execute([$username, $email, $hash, 'nonprofit']);
         $user_id = (int) $pdo->lastInsertId();
@@ -204,7 +204,7 @@ function admin_requests_handle_post(array $admin_user): ?string
         }
         error_log('approve request: ' . $e->getMessage());
 
-        return 'Error: ' . $e->getMessage();
+        return 'Could not create the account. No changes were saved. Please try again.';
     }
 
     return sprintf(

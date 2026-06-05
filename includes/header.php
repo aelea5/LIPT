@@ -47,6 +47,7 @@ $body_class = $body_class ?? '';
                     <li><a href="<?= htmlspecialchars(site_url('roster.php'), ENT_QUOTES, 'UTF-8') ?>"<?= is_current_page('roster.php') ? ' aria-current="page"' : '' ?>>Schedule</a></li>
                     <li><a href="<?= htmlspecialchars(site_url('nonprofit.php'), ENT_QUOTES, 'UTF-8') ?>"<?= is_current_page('nonprofit.php') ? ' aria-current="page"' : '' ?>>Nonprofit Spotlight</a></li>
                     <li><a href="<?= htmlspecialchars(site_url('about.php'), ENT_QUOTES, 'UTF-8') ?>"<?= is_current_page('about.php') ? ' aria-current="page"' : '' ?>>About</a></li>
+                    <li><a href="<?= htmlspecialchars(site_url('faq.php'), ENT_QUOTES, 'UTF-8') ?>"<?= is_current_page('faq.php') ? ' aria-current="page"' : '' ?>>FAQ</a></li>
                     <li><a href="<?= htmlspecialchars(site_url('suggestions.php'), ENT_QUOTES, 'UTF-8') ?>"<?= is_current_page('suggestions.php') ? ' aria-current="page"' : '' ?>>Suggestions</a></li>
                 </ul>
             </nav>

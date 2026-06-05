@@ -38,12 +38,43 @@ function auth_login_url(?string $redirect = null): string
 
 function auth_require_login(): void
 {
-    if (auth_is_logged_in()) {
+    if (!auth_is_logged_in()) {
+        $redirect = $_SERVER['REQUEST_URI'] ?? '';
+        header('Location: ' . auth_login_url($redirect));
+        exit;
+    }
+
+    auth_require_password_changed();
+}
+
+function auth_must_change_password(): bool
+{
+    $user = auth_user();
+    if (!$user || ($user['role'] ?? '') !== 'nonprofit') {
+        return false;
+    }
+
+    require_once __DIR__ . '/db.php';
+
+    $stmt = db()->prepare('SELECT force_password_change FROM users WHERE id = ? LIMIT 1');
+    $stmt->execute([(int) $user['id']]);
+    $row = $stmt->fetch();
+
+    return $row && (int) ($row['force_password_change'] ?? 0) === 1;
+}
+
+function auth_require_password_changed(): void
+{
+    if (!auth_must_change_password()) {
         return;
     }
 
-    $redirect = $_SERVER['REQUEST_URI'] ?? '';
-    header('Location: ' . auth_login_url($redirect));
+    $script = basename($_SERVER['SCRIPT_NAME'] ?? '');
+    if ($script === 'change_password.php') {
+        return;
+    }
+
+    header('Location: ' . site_url('change_password.php'));
     exit;
 }
 

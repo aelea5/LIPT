@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS users (
     email VARCHAR(255) NOT NULL,
     password VARCHAR(255) NOT NULL COMMENT 'bcrypt or argon2 hash',
     role ENUM('admin', 'nonprofit') NOT NULL DEFAULT 'nonprofit',
+    force_password_change TINYINT(1) NOT NULL DEFAULT 0,
     last_verified_prompt DATE NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id),

@@ -48,6 +48,12 @@ require_once dirname(__DIR__) . '/includes/header.php';
                 <li><a href="#schedule-manager">Schedule</a></li>
                 <li><a href="#contact-directory">Contact Directory</a></li>
             </ul>
+            <div class="dashboard-nav__user">
+                <span class="dashboard-nav__signed-in">
+                    Signed in as <?= htmlspecialchars($user['username'] ?? '', ENT_QUOTES, 'UTF-8') ?>
+                </span>
+                <a class="btn btn--secondary btn--small" href="<?= htmlspecialchars(site_url('dashboard/index.php?logout=1'), ENT_QUOTES, 'UTF-8') ?>">Sign out</a>
+            </div>
         </nav>
 
         <div class="card-grid dashboard-grid">
@@ -100,10 +106,6 @@ require_once dirname(__DIR__) . '/includes/header.php';
         <?php admin_schedule_render_manager($schedule_message); ?>
 
         <?php contact_directory_render($role, $user ?? ['id' => 0, 'username' => '', 'role' => 'admin'], $directory_flash); ?>
-
-        <p class="dashboard-footer-links">
-            <a href="<?= htmlspecialchars(site_url('dashboard/index.php?logout=1'), ENT_QUOTES, 'UTF-8') ?>">Sign out</a>
-        </p>
     </div>
 </section>
 

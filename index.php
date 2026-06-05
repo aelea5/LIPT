@@ -61,6 +61,9 @@ require_once __DIR__ . '/includes/header.php';
             and every dollar goes straight to a local cause. No reservation. No dress code. Just good food
             and good people.
         </p>
+        <p class="page-hero__pitch">
+            Your $8 gets you a full plate, dessert, and a drink. No extras, no surprises.
+        </p>
         <p class="page-hero__actions">
             <a class="btn btn--primary" href="<?= htmlspecialchars(site_url('roster.php'), ENT_QUOTES, 'UTF-8') ?>">See who&rsquo;s serving</a>
             <a class="btn btn--secondary btn--on-dark" href="<?= htmlspecialchars(site_url('suggestions.php'), ENT_QUOTES, 'UTF-8') ?>">Share an idea</a>
