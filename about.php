@@ -8,58 +8,95 @@ require_once __DIR__ . '/includes/header.php';
 ?>
 
 <section
-    class="page-hero page-hero--image"
+    class="page-hero page-hero--image page-hero--about"
     style="--hero-image: url('<?= htmlspecialchars($hero_image, ENT_QUOTES, 'UTF-8') ?>')"
-    aria-label="About Lunch in the Park"
+    aria-labelledby="about-hero-heading"
 >
     <span class="visually-hidden">Background photo: stylized view of downtown Jesup with the water tower.</span>
     <div class="container page-hero__inner">
-        <h1>About Lunch in the Park</h1>
-        <p class="page-intro">
-            A Thursday tradition at the Land &rsquo;O Corn Park Pavilion, neighbors, nonprofits, and good food.
-        </p>
+        <h1 id="about-hero-heading">About Lunch in the Park</h1>
+        <p class="page-intro">A Jesup summer tradition, 30 years and counting.</p>
     </div>
 </section>
 
-<section class="page-content">
+<section class="page-content page-content--about">
     <div class="container about-layout">
-        <article class="card about-feature">
-            <figure class="about-feature__figure">
-                <img
-                    src="<?= htmlspecialchars(image_url(LITP_IMAGE_JESUP_MODEL), ENT_QUOTES, 'UTF-8') ?>"
-                    alt="Stylized miniature view of downtown Jesup with the water tower and main street"
-                    width="800"
-                    height="500"
-                    loading="lazy"
-                    decoding="async"
-                >
-                <figcaption class="form-hint">Jesup, our hometown and the heart of Lunch in the Park.</figcaption>
-            </figure>
-            <div class="about-feature__body">
-                <h2>Rooted in Jesup</h2>
-                <p>
-                    Lunch in the Park brings people together at the pavilion on Young and Main.
-                    Local nonprofits host scheduled Thursdays from June through August, serving an $8 lunch
-                    that keeps the focus on community, not fuss.
-                </p>
-                <p>
-                    Whether you live a block away or you&rsquo;re visiting family, you&rsquo;re welcome at the table.
-                </p>
+        <article class="about-section">
+            <h2>What it is</h2>
+            <p>
+                Lunch in the Park is a simple idea that has been working in Jesup for over 30 years. Every selected
+                Thursday from June through August, a local nonprofit sets up at the Land O&rsquo; Corn Park Pavilion
+                and serves lunch for $8 a plate. They keep every dollar. You get a good meal and a reason to get outside.
+            </p>
+        </article>
+
+        <article class="about-section">
+            <h2>How it works</h2>
+            <p>
+                No tickets. No reservation. Just show up between 11am and 1pm, bring $8, and eat. A different
+                organization hosts each week, local groups doing real work in this community. The money they raise
+                goes directly to their cause.
+            </p>
+            <ol class="about-steps">
+                <li class="about-steps__item card">
+                    <span class="about-steps__label">Step 1</span>
+                    <p class="about-steps__title">Show up</p>
+                </li>
+                <li class="about-steps__item card">
+                    <span class="about-steps__label">Step 2</span>
+                    <p class="about-steps__title">Pay $8</p>
+                </li>
+                <li class="about-steps__item card">
+                    <span class="about-steps__label">Step 3</span>
+                    <p class="about-steps__title">Good cause gets funded</p>
+                </li>
+            </ol>
+        </article>
+
+        <article class="about-section">
+            <h2>The History</h2>
+            <p>Lunch in the Park has been a Jesup summer tradition for over 30 years.</p>
+            <div class="about-history-placeholder" role="status">
+                <p>Full history coming soon</p>
             </div>
         </article>
 
-        <article
-            class="page-band page-band--image"
-            style="--band-image: url('<?= htmlspecialchars(image_url(LITP_IMAGE_HOUSE), ENT_QUOTES, 'UTF-8') ?>')"
-        >
-            <span class="visually-hidden">Background photo: a Jesup neighborhood home with a neighbor waving from the porch.</span>
-            <div class="container page-band__inner">
-                <h2>Good neighbors, good company</h2>
+        <article class="about-section">
+            <h2>A New Chapter</h2>
+            <p>
+                In 2026 the program passed to new hands. We are building on what Lori Schutte and those before her
+                created, with a goal of connecting more neighbors, supporting more nonprofits, and making sure this
+                tradition is around for another 30 years.
+            </p>
+        </article>
+
+        <article class="about-section about-section--sister card">
+            <div class="about-sister__body">
+                <h2>Red Letter Project</h2>
                 <p>
-                    Jesup is a town where people still wave from the porch. Lunch in the Park fits that spirit:
-                    informal, friendly, and open to everyone.
+                    Lunch in the Park is part of a broader effort to strengthen Jesup&rsquo;s community. Check out the
+                    <a href="https://www.redletterproject.com" target="_blank" rel="noopener noreferrer">Red Letter Project</a>,
+                    neighbors helping neighbors, year round.
                 </p>
             </div>
+            <figure class="about-sister__figure">
+                <img
+                    src="<?= htmlspecialchars(image_url(LITP_IMAGE_HOUSE), ENT_QUOTES, 'UTF-8') ?>"
+                    alt="A Jesup neighborhood home with a neighbor waving from the porch"
+                    width="400"
+                    height="260"
+                    loading="lazy"
+                    decoding="async"
+                >
+            </figure>
+        </article>
+
+        <article class="about-cta card">
+            <h2>See you Thursday</h2>
+            <p>Check the schedule and come hungry.</p>
+            <p>
+                <a class="btn btn--primary" href="<?= htmlspecialchars(site_url('roster.php'), ENT_QUOTES, 'UTF-8') ?>">See the schedule</a>
+            </p>
         </article>
     </div>
 </section>
